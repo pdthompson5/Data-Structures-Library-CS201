@@ -254,6 +254,11 @@ class CDA{
             ordered = 0
 
         This function is intended to be used alongside manual data assignment using the access operator.
+        This function works well with the traditional for-loop style array assignment:
+            CDA sample(size)
+            for(int i = 0; i < size; i++){
+                sample[i] = i;
+            }
         This function only allocates the memory with no assignments. It assumes that the user will fill out the spaces they allocated.
         */
         CDA(int s){
@@ -421,12 +426,9 @@ class CDA{
         
         /*Runtime: O(1) amortized
         reduces array size by one
-        note: memory deletion is not required, we'll probably do that in resize 
+        note: memory deallocation is not required, we do that in resize 
         shrinks the capacity if only 25% is being used
-        capacity should never be below 4
-
-        status: complete
-        Phase 2 testing : W
+        Specification: capacity should never be below 4
         */
         void DelEnd(){
             size--;
@@ -449,13 +451,9 @@ class CDA{
 
         /*Runtime: O(1) amortized
         reduces array size by one
-        note: memory deletion is not required, we'll probably do that in resize 
+        note: memory deallocation is not required, we do that in resize 
         shrinks the capacity if only 25% is being used
         capacity should never be below 4
-
-        status: complete
-        Phase 2 testing : W
-
         */
         void DelFront(){
             //check if resize is needed
@@ -480,8 +478,6 @@ class CDA{
 
         /*Runtime: O(1)
         returns size
-
-        status: complete
         */
         int Length(){
             return size;
@@ -491,8 +487,6 @@ class CDA{
         
         /*Runtime: O(1)
         returns capcity - size
-
-        status: complete
         */
         int EmptySlots(){
             return (capacity - size);
@@ -503,8 +497,6 @@ class CDA{
         /*Runtime: O(1)
         frees all current array allocations
         restarts with array of capacity 1 and size 0
-
-        status: complete
         */
         void Clear(){
             delete [] arrayStart;
@@ -519,11 +511,10 @@ class CDA{
 
         
         /*Runtime: O(1)
-        returns orderd flag
+        returns ordered flag
         1 = increasing
         -1 = decreasing
         0 = unordered
-
         */
         int Ordered(){
             return ordered;
@@ -536,11 +527,6 @@ class CDA{
         1 = increasing
         -1 = decreasing
         0 = unordered
-
-        status: complete
-
-        Phase 2 testing : W
-    
         */
         int SetOrdered(){
             //these ints will be set to zero if false
@@ -565,7 +551,7 @@ class CDA{
                 current = next;
             }
 
-            //returns 1 if both
+            //returns 1 if both are true - only when all values are the same 
             if(increasing == 1 && decreasing == -1){
                 ordered = 1;
                 return 1;
@@ -579,12 +565,12 @@ class CDA{
 
 
     //Well-defined complex functions
+        //The strucutre of the CDA is not dependent on these functions 
     
-
-        
         /*Runtime: O(1) if ordered, O(size) else
-
-        Phase 2 testing : W
+        Returns the kth size element in the array 
+        If the array is sorted, this problem is trivial 
+        If the array is unsorted this function utilizes a "quickSelect" algorithm similar to quickSort 
         */
         elmtype Select(int k){
             
@@ -609,8 +595,7 @@ class CDA{
 
         
         /*Runtime: O(size*size)
-
-        status: Phase 2 testing : W
+        Executes a simple descending order insertion sort on the CDA
         */
         void InsertionSort(){
             ordered = -1;
@@ -629,9 +614,7 @@ class CDA{
 
         
         /*Runtime: O(size lg(size))
-
-        Phase 2 testing : W
-
+        Executes a descending order merge sort on the CDA
         */
         void MergeSort(){
             ordered = -1;
@@ -641,10 +624,8 @@ class CDA{
 
         
         /*Runtime: O(size + m)
-        this function only really works with ints but could work with other types with a key function
-
-        status: complete
-        Phase 2 testing : W
+        Executes a descending order counting sort on the CDA
+        This function only works with an array of integers 
         */
         void CountingSort(int m){
             ordered = -1;
@@ -672,13 +653,7 @@ class CDA{
             for(int i = 0; i < size; i++){
                 output[count[(*this)[i]]] = (*this)[i];
                 count[(*this)[i]] += 1;
-            }
-
-            // for(int i = 0; i < size; i++){
-            //     cout << output[i] << endl;
-            // }
-
-            
+            }    
 
             for(int i = 0; i < size; i++){
                 (*this)[size - i - 1] = output[i];
@@ -691,10 +666,9 @@ class CDA{
 
         
         /*Runtime: O(lg size) if ordered, O(size) else
-        notes:
-            This function mostly takes the perspecitve of a user rather than acessing the backend functionality 
-        status: complete
-        Phase 2 testing : W
+        Searches the array for the element with elmtype e
+        Uses a binary search if the CDA is ordered
+        otherwise it utilizes a linear search 
         */
         int Search(elmtype e){
             elmtype current;
