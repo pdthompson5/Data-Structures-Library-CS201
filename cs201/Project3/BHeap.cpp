@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <iostream>
 using namespace std;
 
 
@@ -18,9 +19,15 @@ class BinomialTree{
     private:
         int degree;
         Node<keytype>* head;
+        //next and prev are not used within this class, except instantiating to null
         BinomialTree* next;
         BinomialTree* prev;
     public:
+        /*Default constructor 
+            -sets degree to 0
+            -Sets all pointers to null
+        Runtime: 0(1)
+        */
         BinomialTree(){
             degree = 0;
             head = nullptr;
@@ -28,14 +35,24 @@ class BinomialTree{
             prev = nullptr;
         }
 
-        //creates a binomial tree with head head and degree degree
+        /*Constuctor 
+            -Sets the head to the given head
+            -Sets the degree to the given degree
+            -Does not manually alloate memory 
+            -Runtime: O(1)
+        */
         BinomialTree(Node<keytype>* head, int degree){
             this->head = head;
             this->degree = degree;
             next = nullptr;
             prev = nullptr;
         }
-        //creates a degree zero binomial tree with head key k
+
+        /*Constructor 
+            -Creates a tree of degree 0 with a head of keytype k
+            -Manually allocates the head 
+            -Runtime: O(1)
+        */
         BinomialTree(keytype k){
             this->head = new Node<keytype>;
             this->next = nullptr;
@@ -47,6 +64,30 @@ class BinomialTree{
             this->head->next = nullptr;
             this->head->prev = nullptr;
             this->head->parent = nullptr;
+        }
+        
+        /*Idea: free the head, create new trees with its children of degree - 1 adn free those until degree = 0
+        */
+        ~BinomialTree(){
+            
+            //base case: Degree == 0
+            if(degree == 0){
+                delete head;
+                return;
+            }
+
+            Node<keytype>* currentChild = head->leftmostChild;
+            BinomialTree<keytype>* currentTree;
+
+            //For every child of the head 
+            while(currentChild->next != nullptr){
+                //this constuctor doesn't manually allocated memory so it is not wasteful to use it 
+                currentTree = new BinomialTree(currentChild, this->degree - 1);
+                currentChild = currentChild->next;
+                delete currentTree;
+            }
+
+            delete head;
         }
 
 
@@ -82,10 +123,13 @@ class BinomialTree{
             this->prev = prev;
         }
 
-        //Only use if the trees are of the same degree
+        /*Merge
+            -Combines two binomial trees of the same degree 
+            -The head of the tree is the head with the smaller key
+            -Increments the degree of the tree 
+            -Runtime: O(1)
+        */
         void merge(BinomialTree* a){
-            
-            
             
             //case: a's key is smaller 
             if(this->head->key > a->getHead()->key){
@@ -127,6 +171,11 @@ class BinomialTree{
             degree++;
         }
 
+        /*PrintTree
+            -Prints the content of the tree 
+            -Recursive algorithm
+            -prints keys comma seperated, goes from top to bottom left then to bottom right 
+        */
         void printTree(Node<keytype>* current){
             if((current->parent == nullptr && current->leftmostChild == nullptr)
                 || (current->next == nullptr && current->parent == head)){
