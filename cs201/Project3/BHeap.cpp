@@ -209,6 +209,7 @@ class BinomialTree{
 template <typename keytype>
 class BHeap{
     private:
+        //Binomial trees are stored in a linked list with head : head 
         BinomialTree<keytype>* head;
         int size;
 
@@ -338,10 +339,12 @@ class BHeap{
         Runtime: O(lgn)
         */
         keytype extractMin(){
+            //initialize minimum to the first key
             keytype min = head->getHead()->key;
             BinomialTree<keytype>* minRoot = head;
             BinomialTree<keytype>* current = head->getNext();
 
+            //check all roots to find the minimum 
             while(current != nullptr){
                 if(current->getHead()->key < min){
                     min = current->getHead()->key;
@@ -349,13 +352,17 @@ class BHeap{
                 }
                 current = current->getNext();
             }
+
+            //if the minroot is the head, update head 
             if(minRoot == head){
                 head = head->getNext();
             }
+
             //added back - 1 in merge
             int newSize = pow(2, minRoot->getDegree());
             size -= newSize;
 
+            //just pluck out the whole tree if the minRoot belongs to a degree 0 tree
             if(minRoot->getDegree() == 0){
                 if(minRoot->getPrev() != nullptr){
                     minRoot->getPrev()->setNext(minRoot->getNext());
@@ -367,6 +374,40 @@ class BHeap{
                 return min;
             }
             
+            //TODO: clean up, this looks sloppy 
+            
+            //2. for every child, insert them into the root list of a temp Bheap
+            //3. Delete the minRoot
+            //goal: 1. remove min tree from the root list
+            
+            //i stores the degree of the current child 
+            int i = minRoot->getDegree() - 1;
+
+            //create the first child tree 
+            BinomialTree<keytype>* minNext = minRoot->getNext();
+            Node<keytype>* currentChild = minRoot->getHead()->leftmostChild;
+            BinomialTree<keytype>* currentTree = new BinomialTree<keytype>(currentChild, i);
+            i--;
+
+            //Add the first child tree to a new temporary heap
+            BHeap<keytype> temp(currentTree, newSize-1);
+
+            Node<keytype>* nextChild = currentChild->next;
+
+            //reset the new root's list values 
+            currentChild->next = nullptr;
+            currentChild->prev = nullptr;
+            currentChild->parent = nullptr;
+
+            currentChild = nextChild;
+            
+            while(currentChild != nullptr){
+
+            }
+            
+
+
+
             int i = minRoot->getDegree() - 1;
             Node<keytype>* currentNode = minRoot->getHead()->leftmostChild;
             BinomialTree<keytype>* currentTree = new BinomialTree<keytype>(currentNode, i);
@@ -460,6 +501,9 @@ class BHeap{
 
             this->size += H2.size;
             this->fixHeap(); 
+
+            //to indicate that H2 no longer references a heap - important for the destructor 
+            H2.setHead(nullptr);
             
         }
 
@@ -492,6 +536,10 @@ class BHeap{
                     cout << endl;
                 }
             }
+        }
+
+        void setHead(Node<keytype>* head){
+            this->head = head;
         }
 
         
