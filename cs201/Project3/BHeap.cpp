@@ -66,10 +66,14 @@ class BinomialTree{
             this->head->parent = nullptr;
         }
         
-        /*Idea: free the head, create new trees with its children of degree - 1 adn free those until degree = 0
+        /*Idea: free the head, create new trees with its children of degree - 1 and free those until degree = 0
         */
         ~BinomialTree(){
             
+            //tree has been merged in the past and is no longer accesible
+            if(degree == -1){
+                return;
+            }
             //base case: Degree == 0
             if(degree == 0){
                 delete head;
@@ -166,6 +170,8 @@ class BinomialTree{
                 a->getHead()->parent = this->head;
                 this->head->leftmostChild = a->getHead();
             }
+            //shows that tree a is no longer accesible 
+            a->degree = -1;
 
             //Note: none of a's pointers need to be deallocated becuase they are all still in use 
             degree++;
