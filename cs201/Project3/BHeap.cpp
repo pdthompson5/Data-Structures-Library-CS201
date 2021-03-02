@@ -374,37 +374,8 @@ class BHeap{
                 return min;
             }
             
-            //TODO: clean up, this looks sloppy 
-            
-            //2. for every child, insert them into the root list of a temp Bheap
-            //3. Delete the minRoot
-            //goal: 1. remove min tree from the root list
-            
-            //i stores the degree of the current child 
-            int i = minRoot->getDegree() - 1;
-
-            //create the first child tree 
-            BinomialTree<keytype>* minNext = minRoot->getNext();
-            Node<keytype>* currentChild = minRoot->getHead()->leftmostChild;
-            BinomialTree<keytype>* currentTree = new BinomialTree<keytype>(currentChild, i);
-            i--;
-
-            //Add the first child tree to a new temporary heap
-            BHeap<keytype> temp(currentTree, newSize-1);
-
-            Node<keytype>* nextChild = currentChild->next;
-
-            //reset the new root's list values 
-            currentChild->next = nullptr;
-            currentChild->prev = nullptr;
-            currentChild->parent = nullptr;
-
-            currentChild = nextChild;
-            
-            while(currentChild != nullptr){
-
-            }
-            
+           
+              
 
 
 
